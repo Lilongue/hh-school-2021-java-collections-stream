@@ -3,12 +3,7 @@ package tasks;
 import common.Person;
 import common.Task;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,18 +25,21 @@ public class Task8 implements Task {
     if (persons.size() == 0) {
       return Collections.emptyList();
     }
-    persons.remove(0);
-    return persons.stream().map(Person::getFirstName).collect(Collectors.toList());
+    //persons.remove(0); эта строка может принести проблемы
+    return persons.stream()
+            .skip(1) // так мы просто пропускаем первый элемент и делаем stream красивее
+            .map(Person::getFirstName)
+            .collect(Collectors.toList());
   }
 
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().distinct().collect(Collectors.toSet());
+    return  new HashSet<>(getNames(persons)); // это как раз пример, где stream не нужен
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  public String convertPersonToString(Person person) {
-    String result = "";
+  public String convertPersonToString(Person person) { // не вполне уверен, что понял задачу правильно
+    String result = "";                                // нужно вывести "Иванов Петр Васильевич"?
     if (person.getSecondName() != null) {
       result += person.getSecondName();
     }
@@ -50,7 +48,7 @@ public class Task8 implements Task {
       result += " " + person.getFirstName();
     }
 
-    if (person.getSecondName() != null) {
+    if (person.getMiddleName() != null) {             // тут заменил вызов на getMiddleName
       result += " " + person.getSecondName();
     }
     return result;
@@ -71,10 +69,9 @@ public class Task8 implements Task {
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
     boolean has = false;
     for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-        }
+      if (persons2.contains(person1)) { // Предположил, что реализация contains в коллекции эффективнее и проще для чтения
+        has = true;
+        break;
       }
     }
     return has;
@@ -82,16 +79,14 @@ public class Task8 implements Task {
 
   //...
   public long countEven(Stream<Integer> numbers) {
-    count = 0;
-    numbers.filter(num -> num % 2 == 0).forEach(num -> count++);
-    return count;
+    return numbers.filter(num -> num % 2 == 0).count();
   }
 
   @Override
   public boolean check() {
     System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
     boolean codeSmellsGood = false;
-    boolean reviewerDrunk = false;
+    boolean reviewerDrunk = true;
     return codeSmellsGood || reviewerDrunk;
   }
 }

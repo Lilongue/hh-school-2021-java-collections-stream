@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Имеются
@@ -23,7 +25,31 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
-    return new HashSet<>();
+    Stream<Person> personStream = persons.stream();
+    Stream<Area> areaStream = areas.stream();
+    List<List<String>> listOfLists = personStream
+            .map((Person p) -> getStrings(p.getFirstName(), areaFilter(areas, personAreaIds.get(p.getId()))))
+            .collect(Collectors.toList());
+    Set<String> outSet = new HashSet<>();
+    for (List<String> tempList:listOfLists){outSet.addAll(tempList);}
+    return outSet;
+  }
+
+  private List<String> getStrings (String name, List<String> areas){
+    Stream<String> stringStream = areas.stream();
+    List<String> outList = stringStream
+            .map((String s) -> name + " - " + s)
+            .collect(Collectors.toList());
+    return  outList;
+  }
+
+  private List<String> areaFilter (Collection<Area> areas, Set<Integer> areaIds){
+    Stream<Area> areaStream = areas.stream();
+    List<String> outList = areaStream
+            .filter((Area o) -> areaIds.contains(o.getId()))
+            .map(Area::getName)
+            .collect(Collectors.toList());
+    return outList;
   }
 
   @Override
