@@ -17,17 +17,10 @@ import java.util.stream.Stream;
 public class Task7 implements Task {
 
   private Set<String> vacancyNames(Collection<Company> companies) {
-    Stream<Company> companyStream = companies.stream();
-    List<Set<Vacancy>> listOfSets = companyStream
-            .map((Company c) -> c.getVacancies())
-            .collect(Collectors.toList());
-    Set<Vacancy> vacanciesSet = new HashSet<>();
-    for (Set<Vacancy> tempVacancySet : listOfSets) {vacanciesSet.addAll(tempVacancySet);}
-    Set<String> outSet = vacanciesSet.stream()
-            .map((Vacancy v) -> v.getTitle())
-            .collect(Collectors.toSet());
-
-    return outSet;
+    return companies.stream()
+            .flatMap(company -> company.getVacancies().stream()
+                    .map(vacancy -> vacancy.getTitle()))
+            .collect(Collectors.toSet()); // использовал flatMap и убрал в связи с этим кучу промежуточных действий
   }
 
   @Override

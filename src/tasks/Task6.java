@@ -25,31 +25,22 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
-    Stream<Person> personStream = persons.stream();
-    Stream<Area> areaStream = areas.stream();
-    List<List<String>> listOfLists = personStream
-            .map((Person p) -> getStrings(p.getFirstName(), areaFilter(areas, personAreaIds.get(p.getId()))))
-            .collect(Collectors.toList());
-    Set<String> outSet = new HashSet<>();
-    for (List<String> tempList:listOfLists){outSet.addAll(tempList);}
-    return outSet;
+    return persons.stream()
+            .map((Person p) -> getStrings(p.getFirstName()
+                    , areas.stream()
+                    .filter((o) -> personAreaIds.get(p.getId()).contains(o.getId()))
+                    .map(Area::getName)
+                    .collect(Collectors.toList())))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet()); // Применил flatMap + косметически подрихтовал,
+    // но прямо органически чувствую, что что-то не так. Относительно пробега по всем арейкам - они фильтрованные
+    // если только в сторону map'ов двигаться...
   }
 
-  private List<String> getStrings (String name, List<String> areas){
-    Stream<String> stringStream = areas.stream();
-    List<String> outList = stringStream
+  private List<String> getStrings (String name, List<String> filteredAreas){
+    return filteredAreas.stream()
             .map((String s) -> name + " - " + s)
             .collect(Collectors.toList());
-    return  outList;
-  }
-
-  private List<String> areaFilter (Collection<Area> areas, Set<Integer> areaIds){
-    Stream<Area> areaStream = areas.stream();
-    List<String> outList = areaStream
-            .filter((Area o) -> areaIds.contains(o.getId()))
-            .map(Area::getName)
-            .collect(Collectors.toList());
-    return outList;
   }
 
   @Override

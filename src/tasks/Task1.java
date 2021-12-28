@@ -22,12 +22,13 @@ public class Task1 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> findOrderedPersons(List<Integer> personIds) {
-    Set<Person> persons = PersonService.findPersons(personIds);
-    Stream<Person> personStream = persons.stream();
-    List<Person> personList = personStream
-            .sorted(Comparator.comparing(Person::getId))
-            .collect(Collectors.toList());
-    return personList;
+    //Set<Person> persons = PersonService.findPersons(personIds);
+    //List<Person> personList = persons.stream()
+    //        .sorted(Comparator.comparing(Person::getId))
+    //        .collect(Collectors.toList());
+    return PersonService.findPersons(personIds).stream()
+            .sorted(Comparator.comparing(O -> personIds.indexOf(O.getId())))
+            .collect(Collectors.toList()); // Сделал как везде сразу return + поправил сортировку
   }
 
   @Override
