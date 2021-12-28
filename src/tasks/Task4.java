@@ -21,11 +21,12 @@ public class Task4 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons) {
-    Stream<Person> personStream = persons.stream();
-    List<ApiPersonDto> outList = personStream
+    return persons.stream()
             .map((Person x) -> convert(x))
-            .collect(Collectors.toList());
-    return outList;
+            .collect(Collectors.toList()); // Убрал промежуточные переменные
+    // По поводу необязательности типа - не вполне согласен. У нас 2 перегруженных метода, но их может быть 22:
+    // в таком случае может быть не вполне очевидно, какой метод задействован. Может быть в Java все иначе, но
+    // типично наваять 15 перегрузок (для знака +, например) (P.S. Я помню, что Java так не умеет)
   }
 
   private static ApiPersonDto convert(Person person) {

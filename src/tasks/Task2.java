@@ -20,15 +20,10 @@ public class Task2 implements Task {
   private static List<Person> combineAndSortWithLimit(Collection<Person> persons1,
                                                       Collection<Person> persons2,
                                                       int limit) {
-    Stream<Person> personStream1 = persons1.stream();
-    Stream<Person> personStream2 = persons2.stream();
-    Stream<Person> summaryStream = Stream.concat(personStream1, personStream2);
-    List<Person> outArray = summaryStream
+    return Stream.concat(persons1.stream(), persons2.stream())
             .sorted(Comparator.comparing(Person::getCreatedAt))
             .limit(limit)
-            .collect(Collectors.toList());
-
-    return outArray;
+            .collect(Collectors.toList()); // Убрал все промежуточные переменные
   }
 
   @Override

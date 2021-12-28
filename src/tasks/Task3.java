@@ -20,14 +20,11 @@ public class Task3 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> sort(Collection<Person> persons) {
-    //<String> getFIO = (Person o) -> o.getSecondName()+o.getFirstName();
-    Stream<Person> personStream = persons.stream();
-    List<Person> outList = personStream
+    return persons.stream()
             .sorted(Comparator.comparing(Person::getSecondName)
                     .thenComparing(Person::getFirstName)
                     .thenComparing(Person::getCreatedAt))
-            .collect(Collectors.toList());
-    return outList;
+            .collect(Collectors.toList()); // Убрал промежуточные переменные
   }
 
   @Override

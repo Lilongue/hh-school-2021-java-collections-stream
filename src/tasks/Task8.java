@@ -25,7 +25,8 @@ public class Task8 implements Task {
     if (persons.size() == 0) {
       return Collections.emptyList();
     }
-    //persons.remove(0); эта строка может принести проблемы
+    //persons.remove(0); эта строка может принести проблемы, т.к. тут модифицируется переданный список
+    // это как стрелять в нежелательных потенциальных посетителей боевыми на фейсконтроле в клубе
     return persons.stream()
             .skip(1) // так мы просто пропускаем первый элемент и делаем stream красивее
             .map(Person::getFirstName)
@@ -38,43 +39,31 @@ public class Task8 implements Task {
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  public String convertPersonToString(Person person) { // не вполне уверен, что понял задачу правильно
-    String result = "";                                // нужно вывести "Иванов Петр Васильевич"?
-    if (person.getSecondName() != null) {
-      result += person.getSecondName();
-    }
-
-    if (person.getFirstName() != null) {
-      result += " " + person.getFirstName();
-    }
-
-    if (person.getMiddleName() != null) {             // тут заменил вызов на getMiddleName
-      result += " " + person.getSecondName();
-    }
-    return result;
+  public String convertPersonToString(Person person) {
+    return Stream.of(person.getSecondName(), person.getFirstName(), person.getMiddleName())
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining(" ")); // Да через Stream определенно проще выглядит
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    Map<Integer, String> map = new HashMap<>(1);
-    for (Person person : persons) {
-      if (!map.containsKey(person.getId())) {
-        map.put(person.getId(), convertPersonToString(person));
-      }
-    }
-    return map;
+    return persons.stream()
+            .collect(Collectors.toMap(person -> person.getId()
+                    , person -> convertPersonToString(person)
+                    , (val1, val2) -> val1)); // Переделал сбор словаря через Stream. Выглядит компактнее.
+    // из соображений логики предположил, что повторение значений игнорируются (так было в исходном коде)
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
     for (Person person1 : persons1) {
       if (persons2.contains(person1)) { // Предположил, что реализация contains в коллекции эффективнее и проще для чтения
-        has = true;
-        break;
+        // она всегда эффективнее, кроме случая неупорядоченной нехешированной коллекции (в этом случае равна)
+        return true;
       }
     }
-    return has;
+    return false; // return без break'а и убрал переменную has, которая при таком подходе становится лишней
+    // насколько смог понять, Stream.anyMatch тут - как те же яйца только в профиль
   }
 
   //...
@@ -85,8 +74,8 @@ public class Task8 implements Task {
   @Override
   public boolean check() {
     System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
-    boolean codeSmellsGood = false;
-    boolean reviewerDrunk = true;
+    boolean codeSmellsGood = true;
+    boolean reviewerDrunk = false;
     return codeSmellsGood || reviewerDrunk;
   }
 }

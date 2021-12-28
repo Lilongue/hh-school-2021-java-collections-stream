@@ -22,11 +22,11 @@ public class Task5 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons, Map<Integer, Integer> personAreaIds) {
-    Stream<Person> personStream = persons.stream();
-    List<ApiPersonDto> outList = personStream
+    return persons.stream()
             .map((Person p) -> convert(p, personAreaIds.get(p.getId())))
-            .collect(Collectors.toList());
-    return outList;
+            .collect(Collectors.toList()); // Убрал промежуточные переменные
+    // По поводу необязательности типа - не вполне согласен. У нас 2 перегруженных метода, но их может быть 22:
+    // в таком случае может быть не вполне очевидно, какой метод задействован.
   }
 
   private static ApiPersonDto convert(Person person, Integer areaId) {
