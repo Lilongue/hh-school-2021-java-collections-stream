@@ -4,10 +4,7 @@ import common.Person;
 import common.PersonService;
 import common.Task;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,13 +19,13 @@ public class Task1 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> findOrderedPersons(List<Integer> personIds) {
-    //Set<Person> persons = PersonService.findPersons(personIds);
-    //List<Person> personList = persons.stream()
-    //        .sorted(Comparator.comparing(Person::getId))
-    //        .collect(Collectors.toList());
-    return PersonService.findPersons(personIds).stream()
-            .sorted(Comparator.comparing(O -> personIds.indexOf(O.getId())))
-            .collect(Collectors.toList()); // Сделал как везде сразу return + поправил сортировку
+    Map<Integer, Person> personMap = PersonService.findPersons(personIds).stream()
+            .collect(Collectors.toMap(Person::getId, person -> person));
+    return personIds.stream()
+            .map(personMap::get)
+            .collect(Collectors.toList()); // Если сделать через промежуточный map, то вывод листа будет за время O(n)
+    // Однако сама сборка map затрудняюсь ответить за сколько происходит, если это тоже O(n), то суммарно все еще O(n)
+    // Ранее у меня O(n^2) было, так как внутри стрима еще по каждому ID при сортировке пробегал
   }
 
   @Override

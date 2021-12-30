@@ -25,16 +25,16 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
+    Map<Integer, String> areaMap = areas.stream()
+            .collect(Collectors.toMap(Area::getId, Area::getName));
+    Map<Integer, List<String>> map = personAreaIds.keySet().stream()
+            .collect(Collectors.toMap(integer -> integer, personId -> personAreaIds.get(personId).stream()
+                    .map(areaMap::get)
+                    .collect(Collectors.toList())));
     return persons.stream()
-            .map((Person p) -> getStrings(p.getFirstName()
-                    , areas.stream()
-                    .filter((o) -> personAreaIds.get(p.getId()).contains(o.getId()))
-                    .map(Area::getName)
-                    .collect(Collectors.toList())))
+            .map((Person p) -> getStrings(p.getFirstName(), map.get(p.getId())))
             .flatMap(Collection::stream)
-            .collect(Collectors.toSet()); // Применил flatMap + косметически подрихтовал,
-    // но прямо органически чувствую, что что-то не так. Относительно пробега по всем арейкам - они фильтрованные
-    // если только в сторону map'ов двигаться...
+            .collect(Collectors.toSet()); // Добавил промежуточные мапы. Вроде бы все выглядит лучше и быстрее
   }
 
   private List<String> getStrings (String name, List<String> filteredAreas){

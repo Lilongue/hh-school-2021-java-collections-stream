@@ -56,14 +56,14 @@ public class Task8 implements Task {
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
+    Map<Integer, Person> person2Map = persons2.stream()
+            .collect(Collectors.toMap(Person::getId, person -> person));
     for (Person person1 : persons1) {
-      if (persons2.contains(person1)) { // Предположил, что реализация contains в коллекции эффективнее и проще для чтения
-        // она всегда эффективнее, кроме случая неупорядоченной нехешированной коллекции (в этом случае равна)
+      if (person1.equals(person2Map.get(person1.getId()))) { // С учетом последних комментариев, переделал со всемогущим map'ом
         return true;
       }
     }
-    return false; // return без break'а и убрал переменную has, которая при таком подходе становится лишней
-    // насколько смог понять, Stream.anyMatch тут - как те же яйца только в профиль
+    return false;
   }
 
   //...

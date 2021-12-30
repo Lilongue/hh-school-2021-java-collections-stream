@@ -22,11 +22,10 @@ public class Task4 implements Task {
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons) {
     return persons.stream()
-            .map((Person x) -> convert(x))
-            .collect(Collectors.toList()); // Убрал промежуточные переменные
-    // По поводу необязательности типа - не вполне согласен. У нас 2 перегруженных метода, но их может быть 22:
-    // в таком случае может быть не вполне очевидно, какой метод задействован. Может быть в Java все иначе, но
-    // типично наваять 15 перегрузок (для знака +, например) (P.S. Я помню, что Java так не умеет)
+            .map(Task4::convert)
+            .collect(Collectors.toList());
+    // Заменил вызов функции на рекомендуемый. В Java разве не делают что-то типа Type convertToType(otherType something)
+    // со множеством перегрузок и одним параметром? Я держал что-то подобное в голове, подставляя лямбду с указанием типа
   }
 
   private static ApiPersonDto convert(Person person) {
