@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Имеются
@@ -23,7 +25,22 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
-    return new HashSet<>();
+    Map<Integer, String> areaMap = areas.stream()
+            .collect(Collectors.toMap(Area::getId, Area::getName));
+    Map<Integer, List<String>> map = personAreaIds.keySet().stream()
+            .collect(Collectors.toMap(integer -> integer, personId -> personAreaIds.get(personId).stream()
+                    .map(areaMap::get)
+                    .collect(Collectors.toList())));
+    return persons.stream()
+            .map((Person p) -> getStrings(p.getFirstName(), map.get(p.getId())))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet()); // Добавил промежуточные мапы. Вроде бы все выглядит лучше и быстрее
+  }
+
+  private List<String> getStrings (String name, List<String> filteredAreas){
+    return filteredAreas.stream()
+            .map((String s) -> name + " - " + s)
+            .collect(Collectors.toList());
   }
 
   @Override

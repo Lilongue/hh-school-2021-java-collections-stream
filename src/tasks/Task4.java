@@ -7,6 +7,8 @@ import common.Task;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Задача 4
@@ -19,7 +21,11 @@ public class Task4 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons) {
-    return new ArrayList<>();
+    return persons.stream()
+            .map(Task4::convert)
+            .collect(Collectors.toList());
+    // Заменил вызов функции на рекомендуемый. В Java разве не делают что-то типа Type convertToType(otherType something)
+    // со множеством перегрузок и одним параметром? Я держал что-то подобное в голове, подставляя лямбду с указанием типа
   }
 
   private static ApiPersonDto convert(Person person) {

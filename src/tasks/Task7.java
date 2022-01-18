@@ -6,7 +6,10 @@ import common.Vacancy;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Из коллекции компаний необходимо получить всевозможные различные названия вакансий
@@ -14,7 +17,10 @@ import java.util.Set;
 public class Task7 implements Task {
 
   private Set<String> vacancyNames(Collection<Company> companies) {
-    return new HashSet<>();
+    return companies.stream()
+            .flatMap(company -> company.getVacancies().stream()
+                    .map(vacancy -> vacancy.getTitle()))
+            .collect(Collectors.toSet()); // использовал flatMap и убрал в связи с этим кучу промежуточных действий
   }
 
   @Override
